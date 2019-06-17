@@ -1,0 +1,31 @@
+{
+  "name": "rainbow-roles",
+  "version": "1.0.0",
+  "description": "Make Discord server roles change color!",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jackm-xyz/rainbow-roles.git"
+  },
+  "keywords": [
+    "discord",
+    "bot",
+    "color",
+    "rainbow"
+  ],
+  "author": "Jack MacDougall",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jackm-xyz/rainbow-roles/issues"
+  },
+  "homepage": "https://github.com/jackm-xyz/rainbow-roles#readme",
+  "dependencies": {
+    "@discordjs/uws": "^11.149.1",
+    "debug": "^4.1.1",
+    "discord.js": "^11.5.1",
+    "json5": "^2.1.0"
+  }
+}
