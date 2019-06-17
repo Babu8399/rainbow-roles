@@ -29,6 +29,7 @@
 const Discord = require('discord.js')
 const ManagedGuild = require('./guild.js')
 const { token } = require('./token.json')
+const { interval } = require('./config.json')
 
 const bot = new Discord.Client()
 
@@ -43,7 +44,7 @@ bot.on('disconnect', event => {
 
 bot.on('rateLimit', (info, limit, timeDiff, path, method) => {
     console.log(
-        'hit rate limit',
+        'Hit rate limit!',
         info
     )
 })
@@ -63,6 +64,7 @@ bot.on('message', message => {
 
 function updateAll() {
     for(const guild of bot.guilds.array()) {
+        // console.log(guild.roles.array())
         const managed = ManagedGuild.get(guild)
         managed.update()
             .then(() => {})
@@ -70,7 +72,7 @@ function updateAll() {
     }
 }
 bot.on('ready', () => {
-    setInterval(updateAll, 2 * 1000)
+    setInterval(updateAll, interval * 1000)
 })
 
 bot.login(token)

@@ -29,13 +29,18 @@
 const JSON5 = require('json5')
 const FS = require('fs')
 
-const schemes =
+const schemeData =
     JSON5.parse(
         FS.readFileSync(
             'schemes.json5',
             'utf8'
         )
     )
+
+let schemes = {}
+for(const set of Object.keys(schemeData)) {
+    schemes[set] = schemeData[set].set
+}
 
 function colors(set) {
     if (!schemes[set]) throw new Error(`Invalid color scheme "${set}"`)
@@ -48,6 +53,10 @@ Object.defineProperty(colors, 'sets', {
 })
 Object.defineProperty(colors, 'schemes', {
     value: schemes,
+    writable: false
+})
+Object.defineProperty(colors, 'info', {
+    value: schemeData,
     writable: false
 })
 Object.defineProperty(colors, 'colors', {

@@ -1,12 +1,76 @@
 {
     // Pride flag colors,
+    // using color data from https://commons.wikimedia.org/wiki/File:Gay_Pride_Flag.svg.
+    pride: {
+        set: [
+            '#e40303', // Red
+            '#ff8c00', // Orange
+            '#ffed00', // Yellow
+            '#008026', // Green
+            '#004dff', // Blue
+            '#750787', // Purple
+        ],
+        name: 'Pride LGBT Flag',
+    },
+
+    // Pride flag colors,
+    // using color data from https://commons.wikimedia.org/wiki/File:Flag_of_LGBT_(Verdtone).svg.
+    prideverdtone: {
+        set: [
+            '#ed1d24', // Red
+            '#f69322', // Orange
+            '#fff470', // Yellow
+            '#006642', // Green
+            '#003380', // Blue
+            '#643767', // Purple
+        ],
+        name: 'Pride LGBT Flag (Verdtone)'
+    },
+
+    // Pride flag colors,
     // slightly adjusted for Discord's dark theme.
-    pride: [
-        '#ff3e3e', // Red
-        '#e67e22', // Orange
-        '#f1c40f', // Yellow
-        '#2ecc71', // Green
-        '#3498db', // Blue
-        '#9b59b6', // Purple
-    ]
+    prideadj: {
+        set: [
+            '#ff3e3e', // Red
+            '#e67e22', // Orange
+            '#f1c40f', // Yellow
+            '#2ecc71', // Green
+            '#3498db', // Blue
+            '#9b59b6', // Purple
+        ],
+        name: 'Pride LGBT Flag (Discord Adjusted)'
+    },
+
+    // Slovakia flag colors, (red blue white)
+    // requested by Annnelise.
+    redbluewhite: {
+        set: [
+            '#ee1111', // Red
+            '#1140ee', // Blue
+            '#FFFFFF', // White
+        ],
+        name: 'Red, Blue, White'
+    },
+
+    // Red, white and blue colors,
+    // reordered version of Slovakia flag.
+    redwhiteblue: {
+        set: [
+            '#ee1111', // Red
+            '#FFFFFF', // White
+            '#1140ee', // Blue
+        ],
+        name: 'Red, White, Blue'
+    },
+
+    // Ireland flag,
+    // requested by Juevelo.
+    ireland: {
+        set: [
+            '#169b62', // Green
+            '#ffffff', // White
+            '#ff883e', // Orange
+        ],
+        name: 'Flag of Ireland'
+    }
 }

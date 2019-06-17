@@ -30,6 +30,7 @@ const Debug = require('debug')
 const Package = require('./package.json')
 const Axios = require('axios')
 const { token } = require('./token.json')
+const { timeout } = require('./config.json')
 
 const log = Debug('update-color')
 
@@ -40,7 +41,7 @@ module.exports = async (guildID, roleID, colorHex) => {
         result = await Axios.request({
             method: 'PATCH',
             url: `https://discordapp.com/api/guilds/${guildID}/roles/${roleID}`,
-            timeout: 500,
+            timeout: timeout,
             headers: {
                 'Authorization': `Bot ${token}`,
                 'User-Agent': `rainbow-roles-bot/${Package.version}`,
@@ -55,10 +56,10 @@ module.exports = async (guildID, roleID, colorHex) => {
         })
         log(`Updated color successfully on ${guildID}/${roleID}`)
     } catch(err) {
-        message = `Update for ${guildID}/${roleID} failed!`
-        log(message, err)
-        console.log(message, err)
+        log(`Update for ${guildID}/${roleID} failed!`, err)
         throw err
     }
     return result
 }
+
+Object.freeze(module.exports)
