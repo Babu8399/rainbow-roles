@@ -1,7 +1,7 @@
 /*
  * Discord Rainbow Roles
  * 
- * colors.js :: Load color info from the disk
+ * discord.js :: Communicate with Discord servers via the Discord.js API
  *
  * MIT License
  *
@@ -25,35 +25,3 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-
-const JSON5 = require('json5')
-const FS = require('fs')
-
-const schemes =
-    JSON5.parse(
-        FS.readFileSync(
-            'schemes.json5',
-            'utf8'
-        )
-    )
-
-function colors(set) {
-    if (!schemes[set]) throw new Error('Invalid color scheme')
-    return schemes[set]
-}
-
-Object.defineProperty(colors, 'sets', {
-    value: Object.keys(schemes),
-    writable: false
-})
-Object.defineProperty(colors, 'schemes', {
-    value: schemes,
-    writable: false
-})
-Object.defineProperty(colors, 'colors', {
-    value: colors,
-    writable: false
-})
-Object.freeze(colors)
-
-module.exports = colors

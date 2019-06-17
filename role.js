@@ -37,26 +37,32 @@ const loadedRoles = {
 }
 
 function getManagedRole(guild, set) {
-    if (
+    if(
         loadedRoles[guild.id] &&
         (loadedRoles[guild.id] || {})[set]
     ) return loadedRoles[guild.id][set]
     else return new ManagedRole(guild, set)
 }
 
+function name(set) {
+    return `rainbow-${set}`
+}
+
+function exists(guild, name) {
+    return guild.roles.find(role => role.name === name)
+}
+
 function ManagedRole(guild, set) {
     const scheme = Colors(set)
 
-    let role
+    let index = 0
 
-    function name() {
-        return `rainbow-${set}`
-    }
+    let role
 
     async function create() {
         role = await guild.createRole(
             {
-                name: name(),
+                name: name(set),
                 color: scheme[0] || '#FFFFFF',
                 host: false,
                 // position: guild.members.get(bot.user.id).highestRole.position - 1,
@@ -68,7 +74,7 @@ function ManagedRole(guild, set) {
     }
 
     async function find() {
-        role = guild.roles.find(role => role.name === name())
+        role = exists(guild, name(set))
         if (role) return role
 
         await create()
@@ -77,12 +83,31 @@ function ManagedRole(guild, set) {
 
     async function update() {
         const role = await find()
-        // TODO: Cycle current color
+
+        index++
+        if (index >= scheme.length) index = 0
+
+        await role.setColor(scheme[index])
     }
 
     async function remove() {
         const role = await find()
-        // TODO: Delete role and object properties
+        await role.delete()
+        role = undefined
+        delete role
+
+        Object.assign(this, {
+            create: undefined,
+            find: undefined,
+            update: undefined,
+            remove: undefined
+        })
+        delete create
+        delete find
+        delete update
+        delete remove
+
+        delete this
     }
 
     Object.assign(this, {
@@ -91,10 +116,21 @@ function ManagedRole(guild, set) {
         update,
         remove
     })
+
+    if (!loadedRoles[guild.id]) loadedRoles[guild.id] = {}
+    loadedRoles[guild.id][set] = this
 }
 
 Object.defineProperty(ManagedRole, 'get', {
     value: getManagedRole,
+    writable: false
+})
+Object.defineProperty(ManagedRole, 'name', {
+    value: name,
+    writable: false
+})
+Object.defineProperty(ManagedRole, 'exists', {
+    value: exists,
     writable: false
 })
 Object.freeze(ManagedRole)
