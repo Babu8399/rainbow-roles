@@ -1,8 +1,6 @@
 {
-    //
     // Pride flag colors,
     // slightly adjusted for Discord's dark theme.
-    //
     pride: [
         '#ff3e3e', // Red
         '#e67e22', // Orange

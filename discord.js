@@ -25,3 +25,52 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+
+const Discord = require('discord.js')
+const ManagedGuild = require('./guild.js')
+const { token } = require('./token.json')
+
+const bot = new Discord.Client()
+
+module.exports = bot
+
+bot.on('reconnecting', () => {
+})
+bot.on('resume', replayed => {
+})
+bot.on('disconnect', event => {
+})
+
+bot.on('rateLimit', (info, limit, timeDiff, path, method) => {
+    console.log(
+        'hit rate limit',
+        info
+    )
+})
+
+bot.on('error', err => {
+    console.error(err)
+})
+bot.on('warn', warning => {
+    console.log(warning)
+})
+
+bot.on('guildCreate', guild => {
+})
+
+bot.on('message', message => {
+})
+
+function updateAll() {
+    for(const guild of bot.guilds.array()) {
+        const managed = ManagedGuild.get(guild)
+        managed.update()
+            .then(() => {})
+            .catch(err => console.error.bind(console))
+    }
+}
+bot.on('ready', () => {
+    setInterval(updateAll, 2 * 1000)
+})
+
+bot.login(token)

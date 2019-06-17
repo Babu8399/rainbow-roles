@@ -26,7 +26,14 @@
  * SOFTWARE.
  */
 
+const Debug = require('debug')
 const Colors = require('./colors.js')
+const UpdateColor = require('./updatecolor.js')
+const Bot = require('./discord.js')
+
+const log = Debug('role')
+const updateLog = Debug('update-role')
+const rateLimitErrorLog = Debug('rate-limit-error')
 
 const loadedRoles = {
     /*
@@ -40,8 +47,12 @@ function getManagedRole(guild, set) {
     if(
         loadedRoles[guild.id] &&
         (loadedRoles[guild.id] || {})[set]
-    ) return loadedRoles[guild.id][set]
-    else return new ManagedRole(guild, set)
+    ) {
+        return loadedRoles[guild.id][set]
+    } else {
+        log(`Role ${guild.id}/${set} was not found in loadedRoles, creating new ManagedRole`)
+        return new ManagedRole(guild, set)
+    }
 }
 
 function name(set) {
@@ -60,12 +71,13 @@ function ManagedRole(guild, set) {
     let role
 
     async function create() {
+        log(`Creating role  ${guild.id}/${set}`)
         role = await guild.createRole(
             {
                 name: name(set),
                 color: scheme[0] || '#FFFFFF',
                 host: false,
-                // position: guild.members.get(bot.user.id).highestRole.position - 1,
+                position: guild.members.get(Bot.user.id).highestRole.position - 1,
                 permissions: 0,
                 mentionable: false
             },
@@ -74,23 +86,41 @@ function ManagedRole(guild, set) {
     }
 
     async function find() {
+        updateLog(`Finding role ${guild.id}/${set}`)
+
         role = exists(guild, name(set))
-        if (role) return role
+        if (role) {
+            updateLog(`Role already exists, found`)
+            return role
+        }
+        log(`Role ${guild.id}/${set} does not exist, creating`)
 
         await create()
         return role
     }
 
     async function update() {
+        updateLog(`Updating role ${guild.id}/${set}`)
+
         const role = await find()
+
+        updateLog(`Found role ${guild.id}/${set} for update`)
 
         index++
         if (index >= scheme.length) index = 0
 
-        await role.setColor(scheme[index])
+        try {
+            // await role.setColor(scheme[index])
+            await UpdateColor(guild.id, role.id, scheme[index])
+        } catch (err) {
+            rateLimitErrorLog(`Updating role ${guild.id}/${set} failed`, err)
+            process.exit(1) // Fuck
+        }
+        updateLog(`Role ${guild.id}/${set} update complete`)
     }
 
     async function remove() {
+        log(`Removing role ${guild.id}/${set}`)
         const role = await find()
         await role.delete()
         role = undefined

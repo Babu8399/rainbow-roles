@@ -26,8 +26,12 @@
  * SOFTWARE.
  */
 
+const Debug = require('debug')
 const Colors = require('./colors.js')
 const ManagedRole = require('./role.js')
+
+const log = Debug('guild')
+const updateLog = Debug('update-guild')
 
 const loadedGuilds = {
     /*
@@ -36,8 +40,12 @@ const loadedGuilds = {
 }
 
 function getManagedGuild(guild) {
-    if(loadedGuilds[guild.id]) return loadedRoles[guild.id]
-    else return new ManagedRole(guild, set)
+    if(loadedGuilds[guild.id]) {
+        return loadedGuilds[guild.id]
+    } else {
+        log(`Guild ${guild.id} was not found in loadedGuilds, creating new`)
+        return new ManagedGuild(guild)
+    }
 }
 
 function ManagedGuild(guild) {
@@ -50,22 +58,33 @@ function ManagedGuild(guild) {
 
     async function addSet(set) {
         if(hasSet(set)) return
+        log(`Adding ManagedRole for set ${set} into guild ${guild.id}`)
         await ManagedRole.get(guild, set).create()
     }
 
     async function removeSet(set) {
         if(hasSet(set)) return
+        log(`Removing ManagedRole for set ${set} from guild ${guild.id}`)
         await ManagedRole.get(guild, set).remove()
     }
 
     async function update() {
+        updateLog(`Updating guild ${guild.id}`)
+
         for(const set of Colors.sets) {
             const name = ManagedRole.name(set)
+
+            updateLog(`Attempting to update role ${name} within guild ${guild.id}`)
             
-            if(!ManagedRole.exists(guild, name)) continue
+            if(!ManagedRole.exists(guild, name)) {
+                updateLog('Role did not exist within guild')
+                continue
+            }
 
             const managed = ManagedRole.get(guild, set)
             await managed.update()
+
+            updateLog(`Update complete for role ${name}`)
         }
     }
 

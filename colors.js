@@ -38,7 +38,7 @@ const schemes =
     )
 
 function colors(set) {
-    if (!schemes[set]) throw new Error('Invalid color scheme')
+    if (!schemes[set]) throw new Error(`Invalid color scheme "${set}"`)
     return schemes[set]
 }
 
