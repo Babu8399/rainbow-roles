@@ -1,7 +1,7 @@
 /*
  * Discord Rainbow Roles
  *
- * discord.js :: Communicate with Discord servers via the Discord.js API
+ * role.js :: Handle Discord roles
  *
  * MIT License
  *
@@ -26,39 +26,41 @@
  * SOFTWARE.
  */
 
-const Discord = require('discord.js')
-const ManagedGuild = require('./guild.js')
-const { token } = require('./token.json')
-const { interval } = require('./config.json')
+const Set = require('./sets.js')
+const UpdateColor = require('./updatecolor.js')
 
-const bot = new Discord.Client()
+function ManagedRole (role) {
+    let scheme
 
-module.exports = bot
-
-bot.on('reconnecting', () => {})
-bot.on('resume', replayed => {})
-bot.on('disconnect', event => {})
-
-bot.on('rateLimit', (info, limit, timeDiff, path, method) => {})
-
-bot.on('error', err => {})
-bot.on('warn', warning => {})
-
-bot.on('guildCreate', guild => {})
-
-bot.on('message', message => {})
-
-function updateAll () {
-    for (const guild of bot.guilds.array()) {
-        const managed = ManagedGuild.get(guild)
-        managed
-            .update()
-            .then(() => {})
-            .catch(err => console.error.bind(console))
+    try {
+        if (!/^rainbow-[a-zA-Z]+$/i.test(role.name)) throw new Error('Role not managable')
+        scheme = Set(role.name.replace(/^rainbow-$/i, ''))
+        if (!scheme) throw new Error('Role does not have a valid set')
+    } catch (err) {
+        Object.defineProperties(this, {
+            valid: { value: false },
+            scheme: { value: null },
+            role: { value: role },
+            update: { value: () => {} }
+        })
+        return
     }
-}
-bot.on('ready', () => {
-    setInterval(updateAll, interval * 1000)
-})
+    
+    let index = 0
 
-bot.login(token)
+    async function update () {
+        index++
+        if (index >= scheme.length) index = 0
+        await UpdateColor(role.guild.id, role.id, scheme[index])
+    }
+
+    Object.defineProperties(this, {
+        valid: { value: true },
+        scheme: { value: scheme },
+        role: { value: role },
+        update: { value: update }
+    })
+}
+Object.freeze(ManagedRole)
+
+module.exports = ManagedRole

@@ -1,6 +1,6 @@
 /*
  * Discord Rainbow Roles
- * 
+ *
  * index.js :: Include and start everything
  *
  * MIT License

@@ -1,6 +1,6 @@
 /*
  * Discord Rainbow Roles
- * 
+ *
  * role.js :: Handle Discord roles
  *
  * MIT License
@@ -27,7 +27,7 @@
  */
 
 const Debug = require('debug')
-const Colors = require('./colors.js')
+const Set = require('./sets.js')
 const UpdateColor = require('./updatecolor.js')
 const Bot = require('./discord.js')
 
@@ -43,34 +43,34 @@ const loadedRoles = {
     */
 }
 
-function getManagedRole(guild, set) {
-    if(
-        loadedRoles[guild.id] &&
-        (loadedRoles[guild.id] || {})[set]
-    ) {
+function getManagedRole (guild, set) {
+    if (loadedRoles[guild.id] && (loadedRoles[guild.id] || {})[set]) {
         return loadedRoles[guild.id][set]
     } else {
-        log(`Role ${guild.id}/${set} was not found in loadedRoles, creating new ManagedRole`)
+        log(
+            `Role ${guild.id}/${set} was not found in loadedRoles, creating new ManagedRole`
+        )
         return new ManagedRole(guild, set)
     }
 }
 
-function name(set) {
+function name (set) {
     return `rainbow-${set}`
 }
 
-function exists(guild, name) {
+function exists (guild, name) {
     return guild.roles.find(role => role.name === name)
 }
 
-function ManagedRole(guild, set) {
-    const scheme = Colors(set)
+function ManagedRole (guild, set) {
+    const scheme = Set(set)
 
     let index = 0
 
     let role
 
-    async function create() {
+    /*
+    async function create () {
         log(`Creating role  ${guild.id}/${set}`)
         role = await guild.createRole(
             {
@@ -84,8 +84,10 @@ function ManagedRole(guild, set) {
             `Created role to represent color set ${set}, it will be updated by this bot. It has no permissions.`
         )
     }
+    */
 
-    async function find() {
+    /*
+    async function find () {
         updateLog(`Finding role ${guild.id}/${set}`)
 
         role = exists(guild, name(set))
@@ -98,8 +100,14 @@ function ManagedRole(guild, set) {
         await create()
         return role
     }
+    */
 
-    async function update() {
+    function find () {
+        if (!role) role = exists(guild, name(set))
+        return role
+    }
+
+    async function update () {
         updateLog(`Updating role ${guild.id}/${set}`)
 
         const role = await find()
@@ -119,11 +127,13 @@ function ManagedRole(guild, set) {
         updateLog(`Role ${guild.id}/${set} update complete`)
     }
 
-    async function remove() {
+    /*
+    async function remove () {
         log(`Removing role ${guild.id}/${set}`)
         const role = await find()
         await role.delete()
         role = undefined
+
         delete role
 
         Object.assign(this, {
@@ -139,6 +149,7 @@ function ManagedRole(guild, set) {
 
         delete this
     }
+    */
 
     Object.assign(this, {
         create,

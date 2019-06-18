@@ -1,7 +1,7 @@
 /*
  * Discord Rainbow Roles
  *
- * discord.js :: Communicate with Discord servers via the Discord.js API
+ * colors.js :: Load color info from the disk
  *
  * MIT License
  *
@@ -26,39 +26,37 @@
  * SOFTWARE.
  */
 
-const Discord = require('discord.js')
-const ManagedGuild = require('./guild.js')
-const { token } = require('./token.json')
-const { interval } = require('./config.json')
+const JSON5 = require('json5')
+const FS = require('fs')
 
-const bot = new Discord.Client()
+const schemeData = JSON5.parse(FS.readFileSync('schemes.json5', 'utf8'))
 
-module.exports = bot
-
-bot.on('reconnecting', () => {})
-bot.on('resume', replayed => {})
-bot.on('disconnect', event => {})
-
-bot.on('rateLimit', (info, limit, timeDiff, path, method) => {})
-
-bot.on('error', err => {})
-bot.on('warn', warning => {})
-
-bot.on('guildCreate', guild => {})
-
-bot.on('message', message => {})
-
-function updateAll () {
-    for (const guild of bot.guilds.array()) {
-        const managed = ManagedGuild.get(guild)
-        managed
-            .update()
-            .then(() => {})
-            .catch(err => console.error.bind(console))
-    }
+let schemes = {}
+for (const set of Object.keys(schemeData)) {
+    schemes[set] = schemeData[set].set
 }
-bot.on('ready', () => {
-    setInterval(updateAll, interval * 1000)
-})
 
-bot.login(token)
+function colors (set) {
+    if (!schemes[set]) throw new Error(`Invalid color scheme "${set}"`)
+    return schemes[set]
+}
+
+Object.defineProperty(colors, 'sets', {
+    value: Object.keys(schemes),
+    writable: false
+})
+Object.defineProperty(colors, 'schemes', {
+    value: schemes,
+    writable: false
+})
+Object.defineProperty(colors, 'info', {
+    value: schemeData,
+    writable: false
+})
+Object.defineProperty(colors, 'colors', {
+    value: colors,
+    writable: false
+})
+Object.freeze(colors)
+
+module.exports = colors

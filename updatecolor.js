@@ -1,6 +1,6 @@
 /*
  * Discord Rainbow Roles
- * 
+ *
  * updatecolor.js :: Update the color for a role, uses direct Discord API calls (avoid issues with Discord.js)
  *
  * MIT License
@@ -35,7 +35,9 @@ const { timeout } = require('./config.json')
 const log = Debug('update-color')
 
 module.exports = async (guildID, roleID, colorHex) => {
-    log(`Updating color for role ${guildID}/${roleID} to ${colorHex.toUpperCase()}`)
+    log(
+        `Updating color for role ${guildID}/${roleID} to ${colorHex.toUpperCase()}`
+    )
     let result
     try {
         result = await Axios.request({
@@ -43,19 +45,16 @@ module.exports = async (guildID, roleID, colorHex) => {
             url: `https://discordapp.com/api/guilds/${guildID}/roles/${roleID}`,
             timeout: timeout,
             headers: {
-                'Authorization': `Bot ${token}`,
+                Authorization: `Bot ${token}`,
                 'User-Agent': `rainbow-roles-bot/${Package.version}`,
                 'Content-Type': 'application/json'
             },
             data: {
-                color: eval( // TODO: This is somewhat inefficent (use something that isn't eval)
-                    '0x' +
-                    ((colorHex.match(/#[0-9ABCDEF]{6}/i) || [])[0]|| '#FFFFFF').substring(1)
-                )
+                color: eval('0x' + ((colorHex.match(/#[0-9ABCDEF]{6}/i) || [])[0] || '#FFFFFF').substring(1))
             }
         })
         log(`Updated color successfully on ${guildID}/${roleID}`)
-    } catch(err) {
+    } catch (err) {
         log(`Update for ${guildID}/${roleID} failed!`, err)
         throw err
     }

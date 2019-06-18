@@ -1,7 +1,7 @@
 /*
  * Discord Rainbow Roles
- * 
- * colors.js :: Load color info from the disk
+ *
+ * colors.js :: Color schemes and color codes
  *
  * MIT License
  *
@@ -26,43 +26,83 @@
  * SOFTWARE.
  */
 
-const JSON5 = require('json5')
-const FS = require('fs')
+// Color schemes (complete sets)
+const schemes = {
+    // Pride flag colors,
+    // using color data from https://commons.wikimedia.org/wiki/File:Gay_Pride_Flag.svg.
+    pride: {
+        set: [
+            '#e40303', // Red
+            '#ff8c00', // Orange
+            '#ffed00', // Yellow
+            '#008026', // Green
+            '#004dff', // Blue
+            '#750787' // Purple
+        ],
+        name: 'Pride LGBT Flag'
+    },
 
-const schemeData =
-    JSON5.parse(
-        FS.readFileSync(
-            'schemes.json5',
-            'utf8'
-        )
-    )
+    // Pride flag colors,
+    // using color data from https://commons.wikimedia.org/wiki/File:Flag_of_LGBT_(Verdtone).svg.
+    prideverdtone: {
+        set: [
+            '#ed1d24', // Red
+            '#f69322', // Orange
+            '#fff470', // Yellow
+            '#006642', // Green
+            '#003380', // Blue
+            '#643767' // Purple
+        ],
+        name: 'Pride LGBT Flag (Verdtone)'
+    },
 
-let schemes = {}
-for(const set of Object.keys(schemeData)) {
-    schemes[set] = schemeData[set].set
+    // Pride flag colors,
+    // slightly adjusted for Discord's dark theme.
+    prideadj: {
+        set: [
+            '#ff3e3e', // Red
+            '#e67e22', // Orange
+            '#f1c40f', // Yellow
+            '#2ecc71', // Green
+            '#3498db', // Blue
+            '#9b59b6' // Purple
+        ],
+        name: 'Pride LGBT Flag (Discord Adjusted)'
+    }
 }
 
-function colors(set) {
-    if (!schemes[set]) throw new Error(`Invalid color scheme "${set}"`)
-    return schemes[set]
+// Colors for custom rainbow sets
+const colors = {
+    // Discord colors
+    teal: '#1abc9c',
+    green: '#2ecc71',
+    blue: '#3498db',
+    purple: '#9b59b6',
+    pink: '#e91e63',
+    yellow: '#f1c40f',
+    orange: '#e67e22',
+    red: '#e74c3c',
+
+    // Monochrome
+    black: '#010101',
+    grey: '#95a5a6',
+    gray: '#95a5a6',
+    white: '#ffffff',
+
+    // Vivid
+    vred: '#f70d1a',
+    vorange: '#ff5f00',
+    vyellow: '#ffe302',
+    vgreen: '#a6d608',
+    vblue: '#00aaee',
+    vpurple: '#9f00ff'
 }
 
-Object.defineProperty(colors, 'sets', {
-    value: Object.keys(schemes),
-    writable: false
-})
-Object.defineProperty(colors, 'schemes', {
-    value: schemes,
-    writable: false
-})
-Object.defineProperty(colors, 'info', {
-    value: schemeData,
-    writable: false
-})
-Object.defineProperty(colors, 'colors', {
-    value: colors,
-    writable: false
-})
+Object.freeze(schemes)
 Object.freeze(colors)
 
-module.exports = colors
+module.exports = {
+    schemes,
+    colors
+}
+Object.freeze(module.exports)

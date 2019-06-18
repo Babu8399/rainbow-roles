@@ -1,6 +1,6 @@
 /*
  * Discord Rainbow Roles
- * 
+ *
  * guild.js :: Manage Discord guilds and the color ranks within guilds
  *
  * MIT License
@@ -39,8 +39,8 @@ const loadedGuilds = {
     */
 }
 
-function getManagedGuild(guild) {
-    if(loadedGuilds[guild.id]) {
+function getManagedGuild (guild) {
+    if (loadedGuilds[guild.id]) {
         return loadedGuilds[guild.id]
     } else {
         log(`Guild ${guild.id} was not found in loadedGuilds, creating new`)
@@ -48,35 +48,36 @@ function getManagedGuild(guild) {
     }
 }
 
-function ManagedGuild(guild) {
-    function hasSet(set) {
-        return !!ManagedRole.exists(
-            guild,
-            ManagedRole.name(set)
-        )
+function ManagedGuild (guild) {
+    function hasSet (set) {
+        return !!ManagedRole.exists(guild, ManagedRole.name(set))
     }
 
-    async function addSet(set) {
-        if(hasSet(set)) return
+    async function addSet (set) {
+        if (hasSet(set)) return
         log(`Adding ManagedRole for set ${set} into guild ${guild.id}`)
         await ManagedRole.get(guild, set).create()
     }
 
-    async function removeSet(set) {
-        if(hasSet(set)) return
+    async function removeSet (set) {
+        if (hasSet(set)) return
         log(`Removing ManagedRole for set ${set} from guild ${guild.id}`)
         await ManagedRole.get(guild, set).remove()
     }
 
-    async function update() {
+    async function update () {
+        for (const role of guild.roles.array()) {
+            if (!/rainbow-/i.test(role)) continue
+        }
+        /*
         updateLog(`Updating guild ${guild.id}`)
 
-        for(const set of Colors.sets) {
+        for (const set of Colors.sets) {
             const name = ManagedRole.name(set)
 
             updateLog(`Attempting to update role ${name} within guild ${guild.id}`)
-            
-            if(!ManagedRole.exists(guild, name)) {
+
+            if (!ManagedRole.exists(guild, name)) {
                 updateLog('Role did not exist within guild')
                 continue
             }
@@ -86,6 +87,7 @@ function ManagedGuild(guild) {
 
             updateLog(`Update complete for role ${name}`)
         }
+        */
     }
 
     Object.assign(this, {
