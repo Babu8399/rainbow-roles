@@ -58,10 +58,16 @@ bot.on('guildCreate', guild => {
     // TODO: send welcome message n guild
 })
 
-bot.on('message', message => {})
+let mentionRegex
 
+const paused = {
+    /*
+    <guild id>: <paused true/false>
+    */
+}
 function updateAll () {
     for (const guild of bot.guilds.array()) {
+        if (paused[guild.id]) continue
         updateLog(`updating guild ${guild.id} (${guild.name})`)
         const managed = ManagedGuild.get(guild)
         managed
@@ -73,8 +79,16 @@ function updateAll () {
 bot.on('ready', () => {
     log('bot logged into discord servers')
     setInterval(updateAll, interval * 1000)
+    mentionRegex = new RegExp(`<@(!|)${bot.user.id}>`)
+})
+
+bot.on('message', message => {
+    if (message.author.bot) return
+    if (!message.guild) return
+    if (!message.isMentioned(bot.user)) return
+    if (!mentionRegex.test(message.content)) return
+
+    // TODO: interpret commands
 })
 
 bot.login(token)
-
-log('hello, world')

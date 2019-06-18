@@ -33,6 +33,7 @@ const { token } = require('./token.json')
 const { timeout } = require('./config.json')
 
 const log = Debug('update-color')
+const errLog = Debug('update-color-error')
 
 module.exports = async (guildID, roleID, colorHex) => {
     log(

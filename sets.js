@@ -59,7 +59,15 @@ for (const color of Object.keys(colors)) {
 Object.freeze(regexSets)
 log(`generated color sets with ${regexSets.length} entries`)
 
+const schemeCache = {
+    /*
+    <set string>: <scheme>
+    */
+}
+
 function Set (set) {
+    if (schemeCache[set]) return schemeCache[set]
+
     const originalSet = set + ''
 
     set = set.replace(/-/g, '')
@@ -106,6 +114,8 @@ function Set (set) {
     }
 
     buildLog(`built scheme ${scheme} for set ${originalSet}`)
+
+    schemeCache[set] = scheme
 
     return scheme
 }

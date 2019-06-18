@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "DEBUG=guild,role,rate-limit-error node index.js",
+    "start": "DEBUG=update-color-error,colors,scheme-build,hello,guild node index.js",
     "start-dev": "DEBUG=*,-follow-redirects node index.js",
     "format": "npx standardx --fix"
   },

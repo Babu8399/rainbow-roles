@@ -36,6 +36,7 @@ function ManagedRole (role) {
     log(`trying to manage role ${role.id} (${role.name})`)
 
     let scheme
+    let lastRoleName = ''
 
     function buildScheme () {
         if (!/^rainbow-[a-zA-Z]+$/i.test(role.name)) {
@@ -48,13 +49,14 @@ function ManagedRole (role) {
             throw new Error('Role does not have a valid set')
         }
         log(`role ${role.id} (${role.name}) has built a scheme and is manageable`)
+        lastRoleName = role.name
     }
     buildScheme()
 
     let index = -1
 
     async function update () {
-        buildScheme()
+        if (lastRoleName !== role.name) buildScheme()
         log(`updating role ${role.id} (${role.name})`)
         index++
         if (index >= scheme.length) index = 0
