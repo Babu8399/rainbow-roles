@@ -26,39 +26,55 @@
  * SOFTWARE.
  */
 
+const Debug = require('debug')
 const Discord = require('discord.js')
 const ManagedGuild = require('./guild.js')
 const { token } = require('./token.json')
 const { interval } = require('./config.json')
 
+const log = Debug('bot')
+const updateLog = Debug('bot-update')
+
 const bot = new Discord.Client()
 
 module.exports = bot
 
-bot.on('reconnecting', () => {})
-bot.on('resume', replayed => {})
-bot.on('disconnect', event => {})
+bot.on('disconnect', event => {
+    log('bot disconnected from discord', event)
+    process.exit(1)
+})
+bot.on('rateLimit', (info, limit, timeDiff, path, method) => {
+    log('bot hit rate limit', info)
+})
+bot.on('error', err => {
+    log('bot thrown error', err)
+})
+bot.on('warn', warning => {
+    log('bot thrown warning', warning)
+})
 
-bot.on('rateLimit', (info, limit, timeDiff, path, method) => {})
-
-bot.on('error', err => {})
-bot.on('warn', warning => {})
-
-bot.on('guildCreate', guild => {})
+bot.on('guildCreate', guild => {
+    log(`bot joined guild ${guild.id} (${guild.name})`)
+    // TODO: send welcome message n guild
+})
 
 bot.on('message', message => {})
 
 function updateAll () {
     for (const guild of bot.guilds.array()) {
+        updateLog(`updating guild ${guild.id} (${guild.name})`)
         const managed = ManagedGuild.get(guild)
         managed
             .update()
-            .then(() => {})
-            .catch(err => console.error.bind(console))
+            .then(() => updateLog(`completed guild update ${guild.id} (${guild.name})`))
+            .catch(err => log(`failed to update guild ${guild.id} (${guild.name})`, err))
     }
 }
 bot.on('ready', () => {
+    log('bot logged into discord servers')
     setInterval(updateAll, interval * 1000)
 })
 
 bot.login(token)
+
+log('hello, world')

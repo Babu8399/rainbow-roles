@@ -26,7 +26,11 @@
  * SOFTWARE.
  */
 
+const Debug = require('debug')
 const { schemes, colors } = require('./colors.js')
+
+const log = Debug('colors')
+const buildLog = Debug('scheme-build')
 
 const regexSets = [
     /*
@@ -53,8 +57,11 @@ for (const color of Object.keys(colors)) {
     ])
 }
 Object.freeze(regexSets)
+log(`generated color sets with ${regexSets.length} entries`)
 
 function Set (set) {
+    const originalSet = set + ''
+
     set = set.replace(/-/g, '')
 
     if (!/^[a-zA-Z]+$/.test(set)) throw new Error('Bad set, must match /^[a-zA-Z]+$/')
@@ -63,6 +70,8 @@ function Set (set) {
 
     while (true) {
         let bestMatch = null
+
+        buildLog(`building next section for ${originalSet} from ${set}`)
 
         for (const pair of regexSets) {
             const regex = pair[0]
@@ -78,6 +87,7 @@ function Set (set) {
                         replaced,
                         colors
                     ]
+                    buildLog(`new best match for ${set} with ${regex}`)
                 }
             }
         }
@@ -94,6 +104,8 @@ function Set (set) {
     if (set) {
         throw new Error(`Bad set, matches but remaining sequence '${set}' is not valid`)
     }
+
+    buildLog(`built scheme ${scheme} for set ${originalSet}`)
 
     return scheme
 }

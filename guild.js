@@ -27,11 +27,10 @@
  */
 
 const Debug = require('debug')
-const Colors = require('./colors.js')
 const ManagedRole = require('./role.js')
 
 const log = Debug('guild')
-const updateLog = Debug('update-guild')
+const updateLog = Debug('guild-update')
 
 const loadedGuilds = {
     /*
@@ -40,69 +39,59 @@ const loadedGuilds = {
 }
 
 function getManagedGuild (guild) {
-    if (loadedGuilds[guild.id]) {
-        return loadedGuilds[guild.id]
-    } else {
-        log(`Guild ${guild.id} was not found in loadedGuilds, creating new`)
-        return new ManagedGuild(guild)
+    if (!loadedGuilds[guild.id]) {
+        log(`guild ${guild.id} (${guild.name}) is not loaded, creating new ManagedGuild`)
+        loadedGuilds[guild.id] = new ManagedGuild(guild)
     }
+    return loadedGuilds[guild.id]
 }
 
 function ManagedGuild (guild) {
-    function hasSet (set) {
-        return !!ManagedRole.exists(guild, ManagedRole.name(set))
-    }
+    let roles
 
-    async function addSet (set) {
-        if (hasSet(set)) return
-        log(`Adding ManagedRole for set ${set} into guild ${guild.id}`)
-        await ManagedRole.get(guild, set).create()
-    }
+    function buildRoles () {
+        updateLog(`building roles for guild ${guild.id} (${guild.name})`)
 
-    async function removeSet (set) {
-        if (hasSet(set)) return
-        log(`Removing ManagedRole for set ${set} from guild ${guild.id}`)
-        await ManagedRole.get(guild, set).remove()
+        if (!roles) roles = {}
+        const newRoles = {}
+
+        for (const role of guild.roles.array()) {
+            if (!roles[role.id]) {
+                try {
+                    updateLog(`attempting to update role ${role.id} (${role.name})`)
+                    roles[role.id] = new ManagedRole(role)
+                } catch (err) {
+                    updateLog(`failed to update role ${role.id} (${role.name}) on ${guild.id} (${guild.name}), not manageable`, err.message)
+                    continue
+                }
+            }
+            newRoles[role.id] = roles[role.id]
+        }
+
+        roles = newRoles
     }
 
     async function update () {
-        for (const role of guild.roles.array()) {
-            if (!/rainbow-/i.test(role)) continue
-        }
-        /*
-        updateLog(`Updating guild ${guild.id}`)
-
-        for (const set of Colors.sets) {
-            const name = ManagedRole.name(set)
-
-            updateLog(`Attempting to update role ${name} within guild ${guild.id}`)
-
-            if (!ManagedRole.exists(guild, name)) {
-                updateLog('Role did not exist within guild')
-                continue
+        buildRoles()
+        for (const role of Object.values(roles)) {
+            try {
+                await role.update()
+            } catch (err) {
+                updateLog(`failed to update role ${role.id} (${role.name}) on ${guild.id} (${guild.name}), update failed`, err.message)
             }
-
-            const managed = ManagedRole.get(guild, set)
-            await managed.update()
-
-            updateLog(`Update complete for role ${name}`)
         }
-        */
     }
 
-    Object.assign(this, {
-        hasSet,
-        addSet,
-        removeSet,
-        update
+    Object.defineProperties(this, {
+        roles: { value: roles },
+        update: { value: update }
     })
 
-    loadedGuilds[guild.id] = this
+    log(`guild ${guild.id} (${guild.name}) loaded`)
 }
 
 Object.defineProperty(ManagedGuild, 'get', {
-    value: getManagedGuild,
-    writable: false
+    value: getManagedGuild
 })
 Object.freeze(ManagedGuild)
 

@@ -50,7 +50,7 @@ module.exports = async (guildID, roleID, colorHex) => {
                 'Content-Type': 'application/json'
             },
             data: {
-                color: eval('0x' + ((colorHex.match(/#[0-9ABCDEF]{6}/i) || [])[0] || '#FFFFFF').substring(1))
+                color: eval('0x' + ((colorHex.match(/#[0-9ABCDEF]{6}/i) || [])[0] || '#FFFFFF').substring(1)) // Eval is not good, use a better system in the future
             }
         })
         log(`Updated color successfully on ${guildID}/${roleID}`)
