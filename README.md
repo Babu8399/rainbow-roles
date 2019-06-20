@@ -27,7 +27,7 @@ npm start  # Start the bot
 ```
 
 ## Authors
-Made with ❤ by Jack MacDougall ([jackmacdougall.com](https://jackm.xyz/))
+Made with ❤ by Jack MacDougall ([jackm.xyz](https://jackm.xyz/))
 
 
 ## License
