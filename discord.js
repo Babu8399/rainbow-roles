@@ -114,7 +114,9 @@ setsEmbed.setTitle('Color Set List')
 setsEmbed.setDescription('These are all the Rainbow Roles pre-programmed color sets.\nUse them instead of colors and they will be replaced with the colors they contain.')
 for (const set of Object.values(schemes)) {
     const colors = set.set.map(colorToEnglish).join('\n')
-    setsEmbed.addField(set.name, colors)
+    setsEmbed.addField(`set.name (${
+        Object.keys(schemes).find(key => schemes[key].name === set.name)
+    })`, colors)
 }
 setsEmbed.setFooter(...githubFooter)
 
