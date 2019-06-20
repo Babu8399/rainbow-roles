@@ -57,6 +57,7 @@ module.exports = async (guildID, roleID, colorHex) => {
         log(`Updated color successfully on ${guildID}/${roleID}`)
     } catch (err) {
         log(`Update for ${guildID}/${roleID} failed!`, err)
+        errLog(`Update for ${guildID}/${roleID} failed!`, err)
         throw err
     }
     return result

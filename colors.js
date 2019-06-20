@@ -26,6 +26,9 @@
  * SOFTWARE.
  */
 
+const TitleCase = require('titlecase')
+const ColorConvert = require('color-convert')
+
 // Color schemes (complete sets)
 const schemes = {
     // Pride flag colors,
@@ -101,8 +104,20 @@ const colors = {
 Object.freeze(schemes)
 Object.freeze(colors)
 
+function colorTitle (key) {
+    return TitleCase(key.replace(/^v/, 'vivid '))
+}
+function colorToEnglish (color) {
+    return `${color.toUpperCase()} (${TitleCase(ColorConvert.hex.keyword(color))})`
+}
+
+Object.freeze(colorTitle)
+Object.freeze(colorToEnglish)
+
 module.exports = {
     schemes,
-    colors
+    colors,
+    colorTitle,
+    colorToEnglish
 }
 Object.freeze(module.exports)
