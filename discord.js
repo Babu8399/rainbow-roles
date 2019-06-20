@@ -35,7 +35,6 @@ const { interval } = require('./config.json')
 
 const log = Debug('bot')
 const updateLog = Debug('bot-update')
-const commandLog = Debug('bot-command')
 
 const bot = new Discord.Client()
 
@@ -60,7 +59,7 @@ bot.on('warn', warning => {
 bot.on('guildCreate', guild => {
     log(`bot joined guild ${guild.id} (${guild.name})`)
     mainChannel(guild).send({
-        embed: new RichEmbed()
+        embed: new Discord.RichEmbed()
             .setTitle('Rainbow Roles')
             .setDescription('Thanks for adding Rainbow Roles to your Discord server!\nUse "@Rainbow Roles help" to get help using rainbow roles.')
             .setFooter(...githubFooter)
@@ -127,7 +126,6 @@ bot.on('message', message => {
 
     // TODO: interpret commands
     ;(async () => {
-
         /*
         help - display help for commands
         guide - simple setup guide
@@ -152,17 +150,22 @@ bot.on('message', message => {
         }
 
         if (/guide/.test(message.content)) {
-            // TODO: send guide help
+            await message.channel.send({
+                embed: new Discord.RichEmbed()
+                    .setTitle('Usage Guide')
+                    .setDescription('Creating a rainbow role is simple.\nAdd a new role **below the bot\'s highest role** in the roles list.\nThen, name it `rainbow-red` or another color combo like `rainbow-bluegreen`.\nDashes are allowed too so try `rainbow-red-purple-bluegreen-white`.\nThe bot will automatically start cycling colors for that role.\nYou can also use some special sets like `rainbow-pride` or `rainbow-orangetored`.')
+                    .setFooter(...githubFooter)
+            })
             return
         }
 
         if (/colors/.test(message.content)) {
-            await message.channel.send({embed: colorsEmbed})
+            await message.channel.send({ embed: colorsEmbed })
             return
         }
 
         if (/sets/.test(message.content)) {
-            await message.channel.send({embed: setsEmbed})
+            await message.channel.send({ embed: setsEmbed })
             return
         }
 
@@ -192,7 +195,6 @@ bot.on('message', message => {
                 .setDescription(`Sorry but "${message.cleanContent}" isn't a valid command.\nUse "help" to view possible commands.`)
                 .setFooter(...githubFooter)
         })
-
     })()
         .catch(err => {
             log(`failed to interpret command "${message.content}"`, err)
