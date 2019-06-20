@@ -41,6 +41,8 @@ const bot = new Discord.Client()
 
 module.exports = bot
 
+const githubFooter = ['https://github.com/jackm-xyz/rainbow-roles'] // ["View this bot on GitHub", "https://github.com/jackm-xyz/rainbow-roles"]
+
 bot.on('disconnect', event => {
     log('bot disconnected from discord', event)
     process.exit(1)
@@ -57,8 +59,24 @@ bot.on('warn', warning => {
 
 bot.on('guildCreate', guild => {
     log(`bot joined guild ${guild.id} (${guild.name})`)
-    // TODO: send welcome message n guild
+    mainChannel(guild).send({
+        embed: new RichEmbed()
+            .setTitle('Rainbow Roles')
+            .setDescription('Thanks for adding Rainbow Roles to your Discord server!\nUse "@Rainbow Roles help" to get help using rainbow roles.')
+            .setFooter(...githubFooter)
+    })
 })
+
+function mainChannel (guild) {
+    if (guild.systemChannelID) return guild.channels.get(guild.systemChannelID)
+    const general = guild.channels.find(channel => channel.name === 'general')
+    if (general) return general
+    return guild.channels.sort((chanA, chanB) => {
+        if (chanA.type !== `text`) return 1
+        if (!chanA.permissionsFor(guild.me).has('SEND_MESSAGES')) return -1
+        return chanA.position < chanB.position ? -1 : 1
+    }).first()
+}
 
 let mentionRegex
 
@@ -90,6 +108,7 @@ colorsEmbed.setDescription('Here are all the available colors and their color co
 for (const colorName of Object.keys(colors)) {
     colorsEmbed.addField(colorTitle(colorName), colorToEnglish(colors[colorName]))
 }
+colorsEmbed.setFooter(...githubFooter)
 
 const setsEmbed = new Discord.RichEmbed()
 setsEmbed.setTitle('Color Set List')
@@ -98,6 +117,7 @@ for (const set of Object.values(schemes)) {
     const colors = set.set.map(colorToEnglish).join('\n')
     setsEmbed.addField(set.name, colors)
 }
+setsEmbed.setFooter(...githubFooter)
 
 bot.on('message', message => {
     if (message.author.bot) return
@@ -126,6 +146,7 @@ bot.on('message', message => {
                     .addField('colors', 'List possible color names for use in defining new roles.')
                     .addField('sets', 'List all pre-programmed color sets for easy definition of new roles.')
                     .addField('pause', 'Pause the color rotation of roles.')
+                    .setFooter(...githubFooter)
             })
             return
         }
@@ -151,6 +172,7 @@ bot.on('message', message => {
                     embed: new Discord.RichEmbed()
                         .setTitle('Permission Requried')
                         .setDescription('Sorry but you need the "Manage Roles" permission to start/stop the cycling of role colors.')
+                        .setFooter(...githubFooter)
                 })
                 return
             }
@@ -159,6 +181,7 @@ bot.on('message', message => {
                 embed: new Discord.RichEmbed()
                     .setTitle(`Role Cycling ${paused[message.guild.id] ? 'Stopped' : 'Started'}`)
                     .setDescription(`Role color cycling has now been ${paused[message.guild.id] ? 'paused' : 'resumed'} on this server.\nUse "pause" to enable/disable role color cycling.`)
+                    .setFooter(...githubFooter)
             })
             return
         }
@@ -167,6 +190,7 @@ bot.on('message', message => {
             embed: new Discord.RichEmbed()
                 .setTitle('Command Not Found')
                 .setDescription(`Sorry but "${message.cleanContent}" isn't a valid command.\nUse "help" to view possible commands.`)
+                .setFooter(...githubFooter)
         })
 
     })()

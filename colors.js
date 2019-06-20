@@ -28,40 +28,56 @@
 
 const TitleCase = require('titlecase')
 const ColorConvert = require('color-convert')
+const Gradient = require('tinygradient')
+
+function generateGradient (stops, count, removeLast = false, hsv = false) {
+    let gradient = Gradient(...stops)[hsv ? 'hsv' : 'rgb'](count).map(value => {
+        return `#${
+            Math.floor(value._r).toString(16).padStart(2, '0')
+        }${
+            Math.floor(value._g).toString(16).padStart(2, '0')
+        }${
+            Math.floor(value._b).toString(16).padStart(2, '0')
+        }`.toLowerCase()
+    })
+    if (removeLast) gradient.pop()
+    return gradient
+}
 
 // Color schemes (complete sets)
 const schemes = {
-    // Pride flag colors,
-    // using color data from https://commons.wikimedia.org/wiki/File:Gay_Pride_Flag.svg.
+    // Teal-green gradient.
+    tealtogreen: {
+        set: generateGradient(['#1abc9c', '#2ecc71', '#1abc9c'], 8, true),
+        name: 'Teal to Green Gradient'
+    },
+
+    // Orange-red gradient.
+    orangetored: {
+        set: generateGradient(['#e67e22', '#e74c3c', '#e67e22'], 8, true),
+        name: 'Orange to Red Gradient'
+    },
+
+    // Blue-purple gradient.
+    bluetopurple: {
+        set: generateGradient(['#3498db', '#9b59b6', '#3498db'], 8, true),
+        name: 'Blue to Purple Gradient'
+    },
+
+    // Vivid blue to vivid red swapping.
+    siren: {
+        set: ['#f70d1a', '#00aaee'],
+        name: 'Siren'
+    },
+
+    // Red-white-blue swapping.
+    rwb: {
+        set: ['#f70d1a', '#ffffff', '#00aaee'],
+        name: 'Red White and Blue'
+    },
+
+    // Pride flag colors slightly adjusted for Discord's dark theme.
     pride: {
-        set: [
-            '#e40303', // Red
-            '#ff8c00', // Orange
-            '#ffed00', // Yellow
-            '#008026', // Green
-            '#004dff', // Blue
-            '#750787' // Purple
-        ],
-        name: 'Pride LGBT Flag'
-    },
-
-    // Pride flag colors,
-    // using color data from https://commons.wikimedia.org/wiki/File:Flag_of_LGBT_(Verdtone).svg.
-    prideverdtone: {
-        set: [
-            '#ed1d24', // Red
-            '#f69322', // Orange
-            '#fff470', // Yellow
-            '#006642', // Green
-            '#003380', // Blue
-            '#643767' // Purple
-        ],
-        name: 'Pride LGBT Flag (Verdtone)'
-    },
-
-    // Pride flag colors,
-    // slightly adjusted for Discord's dark theme.
-    prideadj: {
         set: [
             '#ff3e3e', // Red
             '#e67e22', // Orange
@@ -70,7 +86,7 @@ const schemes = {
             '#3498db', // Blue
             '#9b59b6' // Purple
         ],
-        name: 'Pride LGBT Flag (Discord Adjusted)'
+        name: 'Pride Flag (Discord Adjusted)'
     }
 }
 
