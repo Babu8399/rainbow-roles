@@ -1,6 +1,6 @@
 {
   "name": "rainbow-roles",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Make Discord server roles change color!",
   "main": "index.js",
   "scripts": {
