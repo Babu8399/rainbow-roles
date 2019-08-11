@@ -28,6 +28,7 @@
 
 const Debug = require('debug')
 const { schemes, colors } = require('./colors.js')
+const { maxIteration } = require('./config.json')
 
 const log = Debug('colors')
 const buildLog = Debug('scheme-build')
@@ -76,7 +77,10 @@ function Set (set) {
 
     let scheme = []
 
+    let i = 0
     while (true) {
+        if (i >= maxIteration) throw new Error('Bad set, reached iteration maximum')
+
         let bestMatch = null
 
         buildLog(`building next section for ${originalSet} from ${set}`)
@@ -104,6 +108,8 @@ function Set (set) {
 
         set = bestMatch[0]
         scheme = scheme.concat(bestMatch[1])
+
+        i++
     }
 
     if (!scheme.length) {

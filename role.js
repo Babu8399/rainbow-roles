@@ -31,6 +31,7 @@ const Set = require('./sets.js')
 const UpdateColor = require('./updatecolor.js')
 
 const log = Debug('role')
+const verboseLog = Debug('role-built')
 
 function ManagedRole (role) {
     log(`trying to manage role ${role.id} (${role.name})`)
@@ -43,11 +44,14 @@ function ManagedRole (role) {
             log(`role ${role.id} (${role.name}) does not match /^rainbow-[a-zA-Z]+$/i`)
             throw new Error('Role not managable')
         }
+        verboseLog(`role ${role.id} (${role.name}) on guild ${role.guild.id} ${role.guild.name} is being compiled`)
         scheme = Set(role.name.replace(/^rainbow-/i, ''))
         if (!scheme) {
+            verboseLog(`role ${role.id} (${role.name}) did not compile`)
             log(`role ${role.id} (${role.name}) is not a valid set`)
             throw new Error('Role does not have a valid set')
         }
+        verboseLog(`role ${role.id} (${role.name}) compiled successfully!`)
         log(`role ${role.id} (${role.name}) has built a scheme and is manageable`)
         lastRoleName = role.name
     }

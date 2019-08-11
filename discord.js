@@ -34,6 +34,8 @@ const { token } = require('./token.json')
 const { interval } = require('./config.json')
 
 const log = Debug('bot')
+const statsLog = Debug('stats')
+const inviteLog = Debug('invites')
 const updateLog = Debug('bot-update')
 
 const bot = new Discord.Client()
@@ -97,8 +99,30 @@ function updateAll () {
 }
 bot.on('ready', () => {
     log('bot logged into discord servers')
+
     setInterval(updateAll, interval * 1000)
     mentionRegex = new RegExp(`<@(!|)${bot.user.id}>`)
+
+    let stats = 'connected to discord, currently participating in the following guilds:\n'
+    bot.guilds.forEach(guild => {
+        stats += `(${guild.id}) ${guild.name} joined at ${guild.joinedAt.toISOString()}\n`
+        let admins = ''
+        let users = ''
+        guild.members.forEach(member => {
+            const isAdmin = member.permissions.has(8)
+            const info = `    ${isAdmin ? 'admin' : 'user '} ${member.user.tag}${member.nickname ? ` (${member.nickname})` : ''} with role ${member.highestRole.name}\n`
+            if (isAdmin) admins += info
+            else users += info
+        })
+        stats += admins
+        stats += users
+        guild.fetchInvites()
+            .then(invites => invites.forEach(invite => {
+                inviteLog(`(${guild.id}) ${guild.name} has invite ${invite.url} with ${invite.maxUses} max uses`)
+            }))
+            .catch(err => statsLog(`error fetching invites for guild (${guild.id}) ${guild.name}`, err.message /* err */))
+    })
+    statsLog(stats)
 })
 
 const colorsEmbed = new Discord.RichEmbed()

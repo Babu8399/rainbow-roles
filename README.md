@@ -6,7 +6,7 @@ Developed as a Discord bot programming exercise, this Discord bot allows server 
 Simple add a new role named `"rainbow-(colors or color sets)"` and the bot will automatically start cycling colors for that role.
 Note that this bot will also spam your server's audit log with "updated role" as it has to update all rainbow roles every few seconds.
 
-~~Click [here](https://discordapp.com/api/oauth2/authorize?client_id=591131468688916497&permissions=268487680&scope=bot) to invite this bot to your server.~~ Bot might be disabled, see [this tweet by @discordapp](https://twitter.com/discordapp/status/1055182857709256704).
+Click [here](https://discordapp.com/api/oauth2/authorize?client_id=591131468688916497&permissions=268487680&scope=bot) to invite this bot to your server.
 
 Use "@Rainbow Roles help" to get help using the bot.
 
