@@ -155,8 +155,8 @@ bot.on('message', message => {
         /*
         help - display help for commands
         guide - simple setup guide
-        colors - avaliable colors
-        sets - avaliable sets
+        colors - available colors
+        sets - available sets
         pause - pause color rotations on this guild
         */
 
@@ -199,7 +199,7 @@ bot.on('message', message => {
             if (!message.member.hasPermission('MANAGE_ROLES')) {
                 await message.channel.send({
                     embed: new Discord.RichEmbed()
-                        .setTitle('Permission Requried')
+                        .setTitle('Permission Required')
                         .setDescription('Sorry but you need the "Manage Roles" permission to start/stop the cycling of role colors.')
                         .setFooter(...githubFooter)
                 })

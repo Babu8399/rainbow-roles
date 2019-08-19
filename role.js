@@ -40,9 +40,9 @@ function ManagedRole (role) {
     let lastRoleName = ''
 
     function buildScheme () {
-        if (!/^rainbow-[a-zA-Z]+$/i.test(role.name)) {
-            log(`role ${role.id} (${role.name}) does not match /^rainbow-[a-zA-Z]+$/i`)
-            throw new Error('Role not managable')
+        if (!/^rainbow-[a-zA-Z-]+$/i.test(role.name)) {
+            log(`role ${role.id} (${role.name}) does not match /^rainbow-[a-zA-Z-]+$/i`)
+            throw new Error('Role not manageable')
         }
         verboseLog(`role ${role.id} (${role.name}) on guild ${role.guild.id} ${role.guild.name} is being compiled`)
         scheme = Set(role.name.replace(/^rainbow-/i, ''))

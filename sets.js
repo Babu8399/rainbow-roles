@@ -69,9 +69,9 @@ const schemeCache = {
 function Set (set) {
     if (schemeCache[set]) return schemeCache[set]
 
-    const originalSet = set + ''
+    set = set.replace(/\-/g, '')
 
-    set = set.replace(/-/g, '')
+    const originalSet = set + ''
 
     if (!/^[a-zA-Z]+$/.test(set)) throw new Error('Bad set, must match /^[a-zA-Z]+$/')
 
